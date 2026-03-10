@@ -5,7 +5,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>مجموعة مدارس سيت الرائدة</title>
-    <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;700;900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;700;900&family=Cairo:wght@400;600;700;800;900&display=swap" rel="stylesheet">
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <script src="https://code.highcharts.com/highcharts.js"></script>
@@ -45,12 +45,73 @@
             padding-left: 100%;
             display: inline-block;
             white-space: nowrap;
-            animation: ticker 45s linear infinite; /* سرعة مناسبة للقراءة */
+            animation: ticker 45s linear infinite;
         }
         .ticker-wrap:hover { animation-play-state: paused; cursor: default; }
         @keyframes ticker {
             0% { transform: translate3d(0, 0, 0); }
             100% { transform: translate3d(-100%, 0, 0); }
+        }
+
+        /* ══ قسم الاختبارات ══ */
+        .exams-section {
+            font-family: 'Cairo', 'Tajawal', sans-serif;
+            background: linear-gradient(155deg, #e6f3fb 0%, #f2f8ff 35%, #edfaf4 70%, #f5f8ff 100%);
+            padding: 60px 0;
+            position: relative;
+            overflow: hidden;
+        }
+        .exams-section::before {
+            content: '';
+            position: absolute; inset: 0;
+            background: radial-gradient(circle at 10% 20%, rgba(0,100,180,0.06) 0%, transparent 50%),
+                        radial-gradient(circle at 90% 80%, rgba(0,160,100,0.05) 0%, transparent 50%);
+        }
+        .exam-day-badge {
+            display: inline-flex; align-items: center; gap: 8px;
+            color: white; font-size: 13px; font-weight: 800;
+            padding: 6px 22px; border-radius: 24px;
+            box-shadow: 0 4px 14px rgba(0,0,0,0.2);
+            position: relative; overflow: hidden;
+        }
+        .exam-day-badge::before {
+            content: ''; position: absolute; top: 0; left: 0; right: 0; height: 50%;
+            background: rgba(255,255,255,0.12); border-radius: 24px 24px 0 0;
+        }
+        .exam-table {
+            width: 100%; border-collapse: separate; border-spacing: 0;
+            border-radius: 14px; overflow: hidden;
+            box-shadow: 0 8px 24px rgba(0,80,160,0.14), 0 0 0 1.5px rgba(0,90,170,0.15);
+        }
+        .exam-table thead th {
+            padding: 13px 8px; text-align: center;
+            font-size: 12px; font-weight: 800; color: white;
+            border-left: 1px solid rgba(255,255,255,0.15);
+            text-shadow: 0 1px 3px rgba(0,0,0,0.3);
+            line-height: 1.45;
+        }
+        .exam-table thead th:last-child { border-left: none; }
+        .exam-table tbody td {
+            padding: 14px 8px; text-align: center;
+            border-left: 1px solid rgba(0,90,170,0.1);
+            border-bottom: 1px solid rgba(0,90,170,0.08);
+            vertical-align: middle;
+        }
+        .exam-table tbody td:last-child { border-left: none; }
+        .exam-table tbody tr:last-child td { border-bottom: none; }
+        .exam-subject { font-size: 14px; font-weight: 800; color: #002855; display: block; }
+        .exam-level   { font-size: 12px; font-weight: 700; color: #003d6e; display: block; margin-top: 3px; }
+        .exam-td-label {
+            font-weight: 800; font-size: 11px; color: #b84000;
+            background: linear-gradient(180deg, #fff6ec, #ffede0);
+            border-right: 3px solid #d86000;
+            white-space: nowrap;
+        }
+        .note-dot {
+            width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; margin-top: 5px;
+            background: linear-gradient(135deg, #00a86b, #006840);
+            box-shadow: 0 1px 4px rgba(0,150,90,0.4);
+            display: inline-block;
         }
     </style>
 </head>
@@ -62,8 +123,7 @@
                 <i class="fa-solid fa-calendar-check"></i> أجندة المؤسسة:
             </div>
             <div class="overflow-hidden w-full relative">
-                <div class="ticker-wrap text-base font-semibold" id="programTicker">
-                    </div>
+                <div class="ticker-wrap text-base font-semibold" id="programTicker"></div>
             </div>
         </div>
     </div>
@@ -78,19 +138,18 @@
                     <span class="block text-xs text-gray-600 font-semibold">S/S SIT PIONNIER - المديرية الإقليمية زاكورة</span>
                 </div>
             </div>
-            
             <div class="hidden lg:block text-center bg-gray-50 border border-gray-200 rounded-lg px-4 py-2 shadow-sm min-w-[200px]">
                 <div class="text-blue-900 font-bold text-sm" id="gregorianDate">...</div>
                 <div class="text-green-700 text-xs font-semibold mt-1" id="hijriDate">...</div>
             </div>
         </div>
-        
         <div class="bg-blue-900 text-white py-2 shadow-inner">
             <div class="container mx-auto px-4">
                 <ul class="flex justify-center space-x-4 md:space-x-8 space-x-reverse font-bold text-xs md:text-base whitespace-nowrap overflow-x-auto">
                     <li><a href="#home" class="hover:text-yellow-400 transition block py-1"><i class="fa-solid fa-house ml-1"></i>الرئيسية</a></li>
                     <li><a href="#director" class="hover:text-yellow-400 transition block py-1"><i class="fa-solid fa-user-tie ml-1"></i>الإدارة</a></li>
                     <li><a href="#activities" class="hover:text-yellow-400 transition block py-1"><i class="fa-solid fa-shapes ml-1"></i>الحياة المدرسية</a></li>
+                    <li><a href="#exams" class="hover:text-yellow-400 transition block py-1"><i class="fa-solid fa-pen-to-square ml-1"></i>الاختبارات</a></li>
                     <li><a href="#statistics" class="hover:text-yellow-400 transition block py-1"><i class="fa-solid fa-chart-pie ml-1"></i>إحصائيات</a></li>
                     <li><a href="#units" class="hover:text-yellow-400 transition block py-1"><i class="fa-solid fa-map-location-dot ml-1"></i>الوحدات</a></li>
                 </ul>
@@ -102,7 +161,6 @@
         <div class="relative z-10">
             <h2 class="text-4xl md:text-7xl font-black mb-6 drop-shadow-lg">بوابة التميز والإبداع</h2>
             <p class="text-xl md:text-3xl mb-10 max-w-3xl mx-auto drop-shadow-md font-light">تنزيل خارطة الطريق 2022-2026 من أجل مدرسة عمومية ذات جودة</p>
-            
             <div class="bg-white/10 backdrop-blur-lg p-6 rounded-2xl max-w-2xl mx-auto border border-white/20 shadow-2xl transform hover:scale-105 transition duration-500">
                 <h3 class="text-yellow-400 font-bold mb-3 text-lg flex items-center justify-center gap-2">
                     <i class="fa-solid fa-lightbulb"></i> حكمة اليوم
@@ -116,7 +174,6 @@
         <div class="text-center mb-12">
             <h2 class="text-3xl font-bold text-blue-900 inline-block border-b-4 border-yellow-400 pb-2">الطاقم الإداري والخدماتي</h2>
         </div>
-        
         <div class="grid grid-cols-1 md:grid-cols-3 gap-8 items-start">
             <div class="bg-white p-8 rounded-2xl shadow-xl border-t-8 border-blue-600 flex flex-col items-center text-center transform hover:-translate-y-2 transition duration-300">
                 <div class="w-40 h-40 bg-gray-200 rounded-full border-4 border-white shadow-lg overflow-hidden mb-6 -mt-20">
@@ -126,7 +183,6 @@
                 <span class="bg-blue-100 text-blue-800 text-sm px-4 py-1 rounded-full font-bold mt-2">مدير المؤسسة</span>
                 <p class="text-gray-500 mt-4 leading-relaxed">إطار متصرف تربوي، التحق بالمؤسسة في فاتح شتنبر 2022. يسهر على التدبير الإداري والتربوي برؤية تشاركية.</p>
             </div>
-
             <div class="bg-white p-6 rounded-2xl shadow-lg border-t-4 border-green-500 flex flex-col items-center text-center mt-12 md:mt-0">
                 <div class="w-24 h-24 bg-green-50 rounded-full flex items-center justify-center border-2 border-green-100 mb-4 shadow-inner">
                     <i class="fa-solid fa-user-pen text-4xl text-green-600"></i>
@@ -135,7 +191,6 @@
                 <span class="bg-green-100 text-green-800 text-xs px-3 py-1 rounded-full font-bold mt-2">مساعد تربوي</span>
                 <p class="text-sm text-gray-500 mt-2">من أعمدة المؤسسة، يعمل بها بتفانٍ منذ سنة 2007.</p>
             </div>
-
             <div class="bg-white p-6 rounded-2xl shadow-lg border-t-4 border-yellow-500 flex flex-col items-center text-center mt-6 md:mt-0">
                 <div class="w-24 h-24 bg-yellow-50 rounded-full flex items-center justify-center border-2 border-yellow-100 mb-4 shadow-inner">
                     <i class="fa-solid fa-user-shield text-4xl text-yellow-600"></i>
@@ -153,7 +208,6 @@
                 <h2 class="text-3xl font-bold text-blue-900 mb-4">فضاء الحياة المدرسية</h2>
                 <p class="text-gray-600 max-w-2xl mx-auto">تفعيلاً للمقرر الوزاري 051.25، تشتغل الأندية التربوية التالية على تنشيط الحياة المدرسية.</p>
             </div>
-
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                 <div class="bg-white rounded-xl shadow-lg overflow-hidden border border-green-100 card-hover">
                     <div class="bg-green-600 p-4 text-white flex justify-between items-center">
@@ -171,13 +225,10 @@
                         </div>
                         <div>
                             <h4 class="font-bold text-gray-800 text-xs mb-2 bg-gray-100 p-1 rounded inline-block">تأطير الأستاذات:</h4>
-                            <p class="text-xs text-gray-500 leading-relaxed">
-                                فتيحة أمضاع، فاطمة الزهراء ايت القاضي، حياة الوكيل، عزيزة مخليص، خديجة كاسي.
-                            </p>
+                            <p class="text-xs text-gray-500 leading-relaxed">فتيحة أمضاع، فاطمة الزهراء ايت القاضي، حياة الوكيل، عزيزة مخليص، خديجة كاسي.</p>
                         </div>
                     </div>
                 </div>
-
                 <div class="bg-white rounded-xl shadow-lg overflow-hidden border border-blue-100 card-hover">
                     <div class="bg-blue-600 p-4 text-white flex justify-between items-center">
                         <h3 class="font-bold text-lg"><i class="fa-solid fa-book-open ml-2"></i>نادي القراءة والكتاب</h3>
@@ -194,13 +245,10 @@
                         </div>
                         <div>
                             <h4 class="font-bold text-gray-800 text-xs mb-2 bg-gray-100 p-1 rounded inline-block">تأطير الأستاذات:</h4>
-                            <p class="text-xs text-gray-500 leading-relaxed">
-                                نعيمة ماسيك، فاطمة الزغداني، سلمى ايت القاضي، خديجة كاسي.
-                            </p>
+                            <p class="text-xs text-gray-500 leading-relaxed">نعيمة ماسيك، فاطمة الزغداني، سلمى ايت القاضي، خديجة كاسي.</p>
                         </div>
                     </div>
                 </div>
-
                 <div class="bg-white rounded-xl shadow-lg overflow-hidden border border-red-100 card-hover">
                     <div class="bg-red-600 p-4 text-white flex justify-between items-center">
                         <h3 class="font-bold text-lg"><i class="fa-solid fa-futbol ml-2"></i>النادي الرياضي</h3>
@@ -218,13 +266,10 @@
                         </div>
                         <div>
                             <h4 class="font-bold text-gray-800 text-xs mb-2 bg-gray-100 p-1 rounded inline-block">تأطير الأساتذة:</h4>
-                            <p class="text-xs text-gray-500 leading-relaxed">
-                                فاطمة الزغداني، عبد الصمد الزوين، العرابي ايت حماد، ابتسام ايت المومن.
-                            </p>
+                            <p class="text-xs text-gray-500 leading-relaxed">فاطمة الزغداني، عبد الصمد الزوين، العرابي ايت حماد، ابتسام ايت المومن.</p>
                         </div>
                     </div>
                 </div>
-
                 <div class="bg-white rounded-xl shadow-lg overflow-hidden border border-teal-100 card-hover">
                     <div class="bg-teal-600 p-4 text-white flex justify-between items-center">
                         <h3 class="font-bold text-lg"><i class="fa-solid fa-heart-pulse ml-2"></i>النادي الصحي</h3>
@@ -241,13 +286,10 @@
                         </div>
                         <div>
                             <h4 class="font-bold text-gray-800 text-xs mb-2 bg-gray-100 p-1 rounded inline-block">تأطير الأساتذة:</h4>
-                            <p class="text-xs text-gray-500 leading-relaxed">
-                                العرابي ايت حماد، ابتسام الزواوي، سكينة الكيمية.
-                            </p>
+                            <p class="text-xs text-gray-500 leading-relaxed">العرابي ايت حماد، ابتسام الزواوي، سكينة الكيمية.</p>
                         </div>
                     </div>
                 </div>
-
                 <div class="bg-white rounded-xl shadow-lg overflow-hidden border border-purple-100 card-hover">
                     <div class="bg-purple-600 p-4 text-white flex justify-between items-center">
                         <h3 class="font-bold text-lg"><i class="fa-solid fa-microchip ml-2"></i>نادي التوجيه والتكنولوجيا</h3>
@@ -264,13 +306,10 @@
                         </div>
                         <div>
                             <h4 class="font-bold text-gray-800 text-xs mb-2 bg-gray-100 p-1 rounded inline-block">تأطير الأساتذة:</h4>
-                            <p class="text-xs text-gray-500 leading-relaxed">
-                                عبد الصمد الزوين، خديجة كاسي، دونيا أوشايحي.
-                            </p>
+                            <p class="text-xs text-gray-500 leading-relaxed">عبد الصمد الزوين، خديجة كاسي، دونيا أوشايحي.</p>
                         </div>
                     </div>
                 </div>
-
                 <div class="bg-white rounded-xl shadow-lg overflow-hidden border border-yellow-100 card-hover">
                     <div class="bg-yellow-600 p-4 text-white flex justify-between items-center">
                         <h3 class="font-bold text-lg"><i class="fa-solid fa-masks-theater ml-2"></i>النادي الثقافي والفني</h3>
@@ -287,9 +326,7 @@
                         </div>
                         <div>
                             <h4 class="font-bold text-gray-800 text-xs mb-2 bg-gray-100 p-1 rounded inline-block">تأطير الأستاذات:</h4>
-                            <p class="text-xs text-gray-500 leading-relaxed">
-                                حسناء ناصر، رشيدة قلموني، عبد الصمد الزوين، فاطمة الزغداني.
-                            </p>
+                            <p class="text-xs text-gray-500 leading-relaxed">حسناء ناصر، رشيدة قلموني، عبد الصمد الزوين، فاطمة الزغداني.</p>
                         </div>
                     </div>
                 </div>
@@ -297,13 +334,141 @@
         </div>
     </section>
 
+    <!-- ══════════════════════════════════════════
+         قسم جدول الاختبارات الكتابية ✨
+    ══════════════════════════════════════════ -->
+    <section id="exams" class="exams-section">
+        <div class="container mx-auto px-4 relative z-10">
+
+            <!-- عنوان القسم -->
+            <div class="text-center mb-10">
+                <h2 class="text-3xl font-bold text-blue-900 mb-2" style="font-family:'Cairo',sans-serif;">
+                    <i class="fa-solid fa-pen-to-square ml-2 text-blue-600"></i>جدول الاختبارات الكتابية
+                </h2>
+                <span class="inline-block bg-blue-50 border border-blue-200 text-blue-800 text-sm font-bold px-6 py-2 rounded-full">
+                    <i class="fa-regular fa-calendar-check ml-1"></i> السنة الدراسية 2025 – 2026
+                </span>
+                <div style="width:70px;height:4px;background:linear-gradient(90deg,#0072b8,#009a6e);margin:12px auto 0;border-radius:4px;"></div>
+            </div>
+
+            <!-- ── اليوم الأول ── -->
+            <div class="mb-8">
+                <div class="flex flex-wrap items-center gap-3 mb-4">
+                    <span class="exam-day-badge" style="background:linear-gradient(135deg,#0062a8,#00478a);">
+                        <i class="fa-solid fa-calendar-day"></i> اليوم الأول
+                    </span>
+                    <span style="background:linear-gradient(135deg,#dceeff,#b8d8ff);color:#003888;border:1.5px solid #80b8ff;padding:5px 16px;border-radius:20px;font-size:12px;font-weight:800;font-family:'Cairo',sans-serif;">
+                        🗓 الخميس
+                    </span>
+                    <span style="background:linear-gradient(135deg,#fffae0,#fff3b8);color:#6a3e00;border:1.5px solid #ffcc00;padding:5px 16px;border-radius:20px;font-size:12px;font-weight:700;font-family:'Cairo',sans-serif;">
+                        ✦ 12 مارس 2026
+                    </span>
+                </div>
+                <div class="overflow-x-auto">
+                    <table class="exam-table" style="min-width:520px;">
+                        <thead>
+                            <tr>
+                                <th style="background:linear-gradient(180deg,#c85000,#a83e00);width:80px;">التوقيت<br/>والمادة</th>
+                                <th style="background:linear-gradient(180deg,#00589a,#003e78);">09:00<br/>—<br/>10:30</th>
+                                <th style="background:linear-gradient(180deg,#0072b8,#005599);">11:00<br/>—<br/>12:30</th>
+                                <th style="background:linear-gradient(180deg,#0092cc,#006fa8);">12:45<br/>—<br/>14:15</th>
+                                <th style="background:linear-gradient(180deg,#00aaa0,#008880);">14:45<br/>—<br/>16:15</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr style="background:linear-gradient(180deg,#f0f7ff,#e6f1ff);">
+                                <td class="exam-td-label">المادة<br/>والمستوى</td>
+                                <td><span class="exam-subject">رياضيات</span><span class="exam-level">المستوى 4 + 5 + 6</span></td>
+                                <td><span class="exam-subject">فرنسية</span><span class="exam-level">المستوى 4 + 5 + 6</span></td>
+                                <td><span class="exam-subject">رياضيات</span><span class="exam-level">المستوى 1 و 2 و 3</span></td>
+                                <td><span class="exam-subject">فرنسية</span><span class="exam-level">المستوى 1 + 2 + 3</span></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- ── اليوم الثاني ── -->
+            <div class="mb-8">
+                <div class="flex flex-wrap items-center gap-3 mb-4">
+                    <span class="exam-day-badge" style="background:linear-gradient(135deg,#008c60,#006045);">
+                        <i class="fa-solid fa-calendar-day"></i> اليوم الثاني
+                    </span>
+                    <span style="background:linear-gradient(135deg,#dcffe8,#b8f0cc);color:#004820;border:1.5px solid #70d890;padding:5px 16px;border-radius:20px;font-size:12px;font-weight:800;font-family:'Cairo',sans-serif;">
+                        🗓 الجمعة
+                    </span>
+                    <span style="background:linear-gradient(135deg,#fffae0,#fff3b8);color:#6a3e00;border:1.5px solid #ffcc00;padding:5px 16px;border-radius:20px;font-size:12px;font-weight:700;font-family:'Cairo',sans-serif;">
+                        ✦ 13 مارس 2026
+                    </span>
+                </div>
+                <div class="overflow-x-auto">
+                    <table class="exam-table" style="min-width:520px;">
+                        <thead>
+                            <tr>
+                                <th style="background:linear-gradient(180deg,#c85000,#a83e00);width:80px;">التوقيت<br/>والمادة</th>
+                                <th style="background:linear-gradient(180deg,#008858,#005e3c);">09:00<br/>—<br/>10:30</th>
+                                <th style="background:linear-gradient(180deg,#00a06a,#007850);">10:45<br/>—<br/>11:45</th>
+                                <th style="background:linear-gradient(180deg,#00b87c,#009062);">13:30<br/>—<br/>15:00</th>
+                                <th style="background:linear-gradient(180deg,#00cc90,#00a272);">15:15<br/>—<br/>16:15</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr style="background:linear-gradient(180deg,#edfff6,#e0f8ec);">
+                                <td class="exam-td-label">المادة<br/>والمستوى</td>
+                                <td><span class="exam-subject">عربية جزء 1</span><span class="exam-level">المستوى 4 + 5 + 6</span></td>
+                                <td><span class="exam-subject">عربية جزء 2</span><span class="exam-level">المستوى 4 + 5 + 6</span></td>
+                                <td><span class="exam-subject">عربية جزء 1</span><span class="exam-level">المستوى 1 + 2 + 3</span></td>
+                                <td><span class="exam-subject">عربية جزء 2</span><span class="exam-level">المستوى 1 + 2 + 3</span></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- ── ملاحظات ── -->
+            <div style="border-radius:14px;overflow:hidden;box-shadow:0 4px 18px rgba(0,110,70,0.13),0 0 0 1.5px rgba(0,150,90,0.18);">
+                <div style="background:linear-gradient(135deg,#006c48,#004a30);padding:11px 18px;color:white;font-size:14px;font-weight:800;font-family:'Cairo',sans-serif;display:flex;align-items:center;gap:8px;">
+                    <i class="fa-solid fa-circle-info"></i> ملاحظات وتوضيحات هامة
+                </div>
+                <div style="background:linear-gradient(180deg,#ecfff7,#e0faf0);padding:16px 18px;display:grid;grid-template-columns:1fr 1fr;gap:10px 24px;" class="notes-grid">
+                    <div style="grid-column:1/-1;display:flex;gap:10px;font-size:13px;color:#172e22;line-height:1.7;font-family:'Cairo',sans-serif;">
+                        <span class="note-dot" style="margin-top:6px;"></span>
+                        <div><strong style="color:#004428;">⏸ استراحة:</strong> تُخصَّص فترة 15 دقيقة للاستراحة داخل القسم بعد تمرير الجزء الأول من موضوع اللغة العربية، ثم انطلاق تمرير الجزء الثاني مباشرة.</div>
+                    </div>
+                    <div style="display:flex;gap:10px;font-size:13px;color:#172e22;line-height:1.7;font-family:'Cairo',sans-serif;">
+                        <span class="note-dot" style="margin-top:6px;"></span>
+                        <div><strong style="color:#004428;">للمستويات 2–3–4–5–6:</strong><br/>◂ الجزء الأول: <strong>تقويم المعجم والفهم القرائي والظواهر اللغوية</strong></div>
+                    </div>
+                    <div style="display:flex;gap:10px;font-size:13px;color:#172e22;line-height:1.7;font-family:'Cairo',sans-serif;">
+                        <span class="note-dot" style="margin-top:6px;"></span>
+                        <div><strong style="color:#004428;">للمستويات 2–3–4–5–6:</strong><br/>◂ الجزء الثاني: <strong>مكوّن فهم المسموع والتعبير الكتابي</strong></div>
+                    </div>
+                    <div style="display:flex;gap:10px;font-size:13px;color:#172e22;line-height:1.7;font-family:'Cairo',sans-serif;">
+                        <span class="note-dot" style="margin-top:6px;"></span>
+                        <div><strong style="color:#004428;">بالنسبة للمستوى الأول:</strong><br/>◂ الجزء الأول: <strong>تقويم فهم المسموع وفهم المقروء</strong></div>
+                    </div>
+                    <div style="display:flex;gap:10px;font-size:13px;color:#172e22;line-height:1.7;font-family:'Cairo',sans-serif;">
+                        <span class="note-dot" style="margin-top:6px;"></span>
+                        <div><strong style="color:#004428;">بالنسبة للمستوى الأول:</strong><br/>◂ الجزء الثاني: <strong>مكوّن الإملاء والإنتاج الكتابي</strong></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- توقيع -->
+            <p style="text-align:center;margin-top:16px;font-size:13px;color:#555;font-weight:700;font-family:'Cairo',sans-serif;">
+                <i class="fa-solid fa-user-tie ml-1 text-blue-700"></i> من إعداد ذ. حفيظ آيت الطالب – مدير المؤسسة
+            </p>
+
+        </div>
+    </section>
+    <!-- ══ نهاية قسم الاختبارات ══ -->
+
     <section id="statistics" class="py-16 bg-white">
         <div class="container mx-auto px-4">
             <h2 class="text-3xl font-bold text-center text-blue-900 mb-4">المؤشرات التربوية</h2>
             <p class="text-center text-gray-500 mb-12 font-bold bg-blue-50 inline-block px-6 py-2 rounded-full border border-blue-100 mx-auto block w-fit">
                 <i class="fa-regular fa-calendar-check ml-2"></i>الموسم الدراسي الحالي 2025/2026
             </p>
-            
             <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-12 text-white">
                 <div class="bg-blue-600 p-6 rounded-xl shadow-lg text-center hover:bg-blue-700 transition">
                     <i class="fa-solid fa-users text-4xl mb-2 opacity-80"></i>
@@ -326,7 +491,6 @@
                     <p class="text-3xl font-bold">7</p>
                 </div>
             </div>
-
             <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-12">
                 <div class="bg-gray-50 p-4 rounded-xl shadow border">
                     <div id="chartLevels" style="height: 400px;"></div>
@@ -340,8 +504,7 @@
                     </div>
                 </div>
             </div>
-
-             <div class="overflow-x-auto bg-white rounded-xl shadow-lg p-6 border-t-4 border-blue-500">
+            <div class="overflow-x-auto bg-white rounded-xl shadow-lg p-6 border-t-4 border-blue-500">
                 <table class="w-full text-center border-collapse">
                     <thead>
                         <tr class="bg-blue-50 text-blue-900 border-b-2 border-blue-200">
@@ -381,12 +544,12 @@
                     <h3 class="text-xl font-bold mb-4 text-yellow-400">تواصل معنا</h3>
                     <ul class="space-y-4">
                         <li class="flex items-center justify-center md:justify-start gap-3 bg-blue-800/50 p-2 rounded-lg hover:bg-blue-800 transition">
-                             <span class="font-mono text-lg ltr-text text-left text-yellow-300" dir="ltr">+212 61 91 31 73</span> 
-                             <i class="fa-solid fa-phone text-white"></i>
+                            <span class="font-mono text-lg ltr-text text-left text-yellow-300" dir="ltr">+212 61 91 31 73</span>
+                            <i class="fa-solid fa-phone text-white"></i>
                         </li>
                         <li class="flex items-center justify-center md:justify-start gap-3 bg-blue-800/50 p-2 rounded-lg hover:bg-blue-800 transition">
-                             <a href="mailto:secteurscolairesit2022@gmail.com" class="font-sans text-sm hover:text-yellow-300 transition">secteurscolairesit2022@gmail.com</a>
-                             <i class="fa-solid fa-envelope text-white"></i>
+                            <a href="mailto:secteurscolairesit2022@gmail.com" class="font-sans text-sm hover:text-yellow-300 transition">secteurscolairesit2022@gmail.com</a>
+                            <i class="fa-solid fa-envelope text-white"></i>
                         </li>
                     </ul>
                 </div>
@@ -414,104 +577,37 @@
     </div>
 
     <script>
-        /*************************************************
-         * 1. دوال التاريخ (ميلادي وهجري)
-         ************************************************/
         function updateDateWidget() {
             const today = new Date();
             const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
-            const gregStr = today.toLocaleDateString('ar-MA', options);
-            document.getElementById('gregorianDate').innerText = "سيت في: " + gregStr;
-
-            const hijriStr = new Intl.DateTimeFormat('ar-SA-u-ca-islamic', {
-                day: 'numeric', month: 'long', year: 'numeric'
-            }).format(today);
-            document.getElementById('hijriDate').innerText = "الموافق لـ: " + hijriStr;
+            document.getElementById('gregorianDate').innerText = "سيت في: " + today.toLocaleDateString('ar-MA', options);
+            document.getElementById('hijriDate').innerText = "الموافق لـ: " + new Intl.DateTimeFormat('ar-SA-u-ca-islamic', { day: 'numeric', month: 'long', year: 'numeric' }).format(today);
         }
 
-        /*************************************************
-         * 2. شريط المستجدات الذكي (برنامج العمل السنوي)
-         ************************************************/
         function updateProgramTicker() {
-            const month = new Date().getMonth() + 1; 
+            const month = new Date().getMonth() + 1;
             let messages = [];
+            if (month === 9) { messages = ["توقيع محاضر الدخول (01 شتنبر 2025)","استقبال التلاميذ وتوزيع الكتب (08 شتنبر)","تمرير روائز الموضعة القبلية (09-12 شتنبر)","الانطلاق الفعلي لبرنامج الدعم (15 شتنبر)","الاحتفال باليوم الوطني لجمعية الآباء (30 شتنبر)"]; }
+            else if (month === 10) { messages = ["الاحتفال باليوم العالمي للمدرس (05 أكتوبر)","تمرير روائز الموضعة البعدية (13-18 أكتوبر)","انطلاق إرساء التعلمات الجديدة (27 أكتوبر)","تفعيل مجالس المؤسسة والأندية التربوية"]; }
+            else if (month === 11) { messages = ["الاحتفال بذكرى المسيرة الخضراء (06 نونبر)","الاحتفال بعيد الاستقلال المجيد (18 نونبر)","اليوم الوطني للتعاون المدرسي","اليوم العالمي للتضامن مع الشعب الفلسطيني (29 نونبر)"]; }
+            else if (month === 12) { messages = ["اليوم العالمي للسيدا (فاتح دجنبر)","اليوم العالمي لحقوق الإنسان (10 دجنبر)","فروض المراقبة المستمرة - الأسدوس الأول"]; }
+            else if (month === 1) { messages = ["ذكرى تقديم وثيقة الاستقلال (11 يناير)","الامتحان الموحد المحلي (19-20 يناير 2026)","عقد مجالس الأقسام وتوزيع النتائج (24 يناير)"]; }
+            else if (month === 3) { messages = ["الاحتفال باليوم العالمي للمرأة (08 مارس)","الاجتماع الثالث لمجالس المؤسسة","الاختبارات الكتابية: الخميس 12 مارس والجمعة 13 مارس 2026 ✨"]; }
+            else if (month === 4) { messages = ["اليوم العالمي للصحة (07 أبريل)","انطلاق التسجيل الأولي للموسم المقبل"]; }
+            else if (month === 5) { messages = ["اليوم العالمي للمسرح المدرسي (14 ماي)","اليوم العالمي بدون تدخين (31 ماي)"]; }
+            else if (month === 6) { messages = ["اليوم العالمي للبيئة (05 يونيو)","الامتحان الموحد الإقليمي للمستوى السادس (26-27 يونيو 2026)","فروض المراقبة المستمرة - الأسدوس الثاني"]; }
+            else if (month === 7) { messages = ["توزيع بيانات النقط والنتائج النهائية (04 يوليوز 2026)","توقيع محاضر الخروج (11 يوليوز)"]; }
+            else { messages = ["مجموعة مدارس سيت ترحب بكم","نعمل سوياً من أجل مدرسة الجودة","التواصل المستمر أساس النجاح"]; }
 
-            // استخراج المحطات من وثيقة برنامج العمل السنوي
-            if (month === 9) {
-                messages = [
-                    "توقيع محاضر الدخول (01 شتنبر 2025)",
-                    "استقبال التلاميذ وتوزيع الكتب (08 شتنبر)",
-                    "تمرير روائز الموضعة القبلية (09-12 شتنبر)",
-                    "الانطلاق الفعلي لبرنامج الدعم (15 شتنبر)",
-                    "الاحتفال باليوم الوطني لجمعية الآباء (30 شتنبر)"
-                ];
-            } else if (month === 10) {
-                messages = [
-                    "الاحتفال باليوم العالمي للمدرس (05 أكتوبر)",
-                    "تمرير روائز الموضعة البعدية (13-18 أكتوبر)",
-                    "انطلاق إرساء التعلمات الجديدة (27 أكتوبر)",
-                    "تفعيل مجالس المؤسسة والأندية التربوية"
-                ];
-            } else if (month === 11) {
-                messages = [
-                    "الاحتفال بذكرى المسيرة الخضراء (06 نونبر)",
-                    "الاحتفال بعيد الاستقلال المجيد (18 نونبر)",
-                    "اليوم الوطني للتعاون المدرسي (الأسبوع الأخير من نونبر)",
-                    "اليوم العالمي للتضامن مع الشعب الفلسطيني (29 نونبر)"
-                ];
-            } else if (month === 12) {
-                messages = [
-                    "اليوم العالمي للسيدا (فاتح دجنبر)",
-                    "اليوم العالمي لحقوق الإنسان (10 دجنبر)",
-                    "فروض المراقبة المستمرة - الأسدوس الأول"
-                ];
-            } else if (month === 1) {
-                messages = [
-                    "ذكرى تقديم وثيقة الاستقلال (11 يناير)",
-                    "الامتحان الموحد المحلي (19-20 يناير 2026)",
-                    "عقد مجالس الأقسام وتوزيع النتائج (24 يناير)"
-                ];
-            } else if (month === 3) {
-                messages = ["الاحتفال باليوم العالمي للمرأة (08 مارس)", "الاجتماع الثالث لمجالس المؤسسة"];
-            } else if (month === 4) {
-                messages = ["اليوم العالمي للصحة (07 أبريل)", "انطلاق التسجيل الأولي للموسم المقبل"];
-            } else if (month === 5) {
-                messages = ["اليوم العالمي للمسرح المدرسي (14 ماي)", "اليوم العالمي بدون تدخين (31 ماي)"];
-            } else if (month === 6) {
-                messages = [
-                    "اليوم العالمي للبيئة (05 يونيو)",
-                    "الامتحان الموحد الإقليمي للمستوى السادس (26-27 يونيو 2026)",
-                    "فروض المراقبة المستمرة - الأسدوس الثاني"
-                ];
-            } else if (month === 7) {
-                messages = ["توزيع بيانات النقط والنتائج النهائية (04 يوليوز 2026)", "توقيع محاضر الخروج (11 يوليوز)"];
-            } else {
-                // رسائل عامة
-                messages = [
-                    "مجموعة مدارس سيت ترحب بكم",
-                    "نعمل سوياً من أجل مدرسة الجودة",
-                    "التواصل المستمر أساس النجاح"
-                ];
-            }
-
-            const tickerContainer = document.getElementById('programTicker');
-            let htmlContent = "";
-            messages.forEach(msg => {
-                htmlContent += `<span class="ml-16 inline-flex items-center"><i class="fa-solid fa-calendar-day text-yellow-400 ml-2"></i>${msg}</span>`;
-            });
-            tickerContainer.innerHTML = htmlContent;
+            let html = "";
+            messages.forEach(msg => { html += `<span class="ml-16 inline-flex items-center"><i class="fa-solid fa-calendar-day text-yellow-400 ml-2"></i>${msg}</span>`; });
+            document.getElementById('programTicker').innerHTML = html;
         }
 
-        /*************************************************
-         * 3. بيانات الإحصائيات والوحدات
-         ************************************************/
         const levelsData = {
-            level1: { total: 42, female: 25 },
-            level2: { total: 48, female: 24 },
-            level3: { total: 40, female: 26 },
-            level4: { total: 40, female: 21 },
-            level5: { total: 45, female: 18 },
-            level6: { total: 42, female: 23 }
+            level1: { total: 42, female: 25 }, level2: { total: 48, female: 24 },
+            level3: { total: 40, female: 26 }, level4: { total: 40, female: 21 },
+            level5: { total: 45, female: 18 }, level6: { total: 42, female: 23 }
         };
 
         function generateImages(unitId) {
@@ -530,7 +626,6 @@
             { id: 7, name: "أرك", description: "وحدة صغرى ولكنها كبرى بطموح تلاميذها.", students: 7, females: 5, teachers: ["حسناء لطيف", "خديجة كريم"], teacherCount: 2, femaleTeachers: 2, images: generateImages(7), locationLink: "https://maps.app.goo.gl/3miFXaS8wEFZRkGV7" }
         ];
 
-        /* --- خوارزمية الحكم التربوية --- */
         const quotes = [
             "التعليم هو السلاح الأقوى الذي يمكنك استخدامه لتغيير العالم.", "إنما الأمم الأخلاق ما بقيت.", "من جد وجد ومن زرع حصد.", "العلم نور والجهل عار.",
             "التربية هي تنمية كل ما لدى الطفل من قدرات.", "المعلم هو الشمعة التي تحترق لتضيء طريق الآخرين.", "لا تطلب العلم رياءً، ولا تتركه حياءً.",
@@ -539,19 +634,16 @@
         ];
 
         function setDailyQuote() {
-            const index = new Date().getDate() % quotes.length;
-            document.getElementById('dailyQuote').innerText = `"${quotes[index]}"`;
+            document.getElementById('dailyQuote').innerText = `"${quotes[new Date().getDate() % quotes.length]}"`;
         }
 
         function calculateTotals() {
             let totalStudents = 0, totalFemales = 0, totalTeachers = 0;
             Object.values(levelsData).forEach(l => { totalStudents += l.total; totalFemales += l.female; });
             units.forEach(u => totalTeachers += u.teacherCount);
-
             document.getElementById('totalStudentsDisplay').innerText = totalStudents;
             document.getElementById('totalFemalesDisplay').innerText = totalFemales;
             document.getElementById('totalTeachersDisplay').innerText = totalTeachers;
-
             const tbody = document.getElementById('levelsTableBody');
             tbody.innerHTML = `
                 <tr class="bg-white border-b hover:bg-gray-50">
@@ -570,14 +662,7 @@
 
         function renderHighcharts() {
             Highcharts.setOptions({ chart: { style: { fontFamily: 'Tajawal' } }, credits: { enabled: false }, colors: ['#2563eb', '#db2777', '#16a34a', '#d97706', '#9333ea'] });
-            Highcharts.chart('chartLevels', {
-                chart: { type: 'column', options3d: { enabled: true, alpha: 10, beta: 25, depth: 70 } },
-                title: { text: 'توزيع التلاميذ حسب المستويات' },
-                xAxis: { categories: ['الأول', 'الثاني', 'الثالث', 'الرابع', 'الخامس', 'السادس'] },
-                yAxis: { title: { text: 'عدد التلاميذ' } },
-                plotOptions: { column: { depth: 25, borderRadius: 5 } },
-                series: [{ name: 'المجموع', data: Object.values(levelsData).map(l => l.total), color: '#2563eb' }, { name: 'إناث', data: Object.values(levelsData).map(l => l.female), color: '#db2777' }]
-            });
+            Highcharts.chart('chartLevels', { chart: { type: 'column', options3d: { enabled: true, alpha: 10, beta: 25, depth: 70 } }, title: { text: 'توزيع التلاميذ حسب المستويات' }, xAxis: { categories: ['الأول', 'الثاني', 'الثالث', 'الرابع', 'الخامس', 'السادس'] }, yAxis: { title: { text: 'عدد التلاميذ' } }, plotOptions: { column: { depth: 25, borderRadius: 5 } }, series: [{ name: 'المجموع', data: Object.values(levelsData).map(l => l.total), color: '#2563eb' }, { name: 'إناث', data: Object.values(levelsData).map(l => l.female), color: '#db2777' }] });
             let totalS = 0, totalF = 0;
             Object.values(levelsData).forEach(l => { totalS += l.total; totalF += l.female; });
             Highcharts.chart('chartStudentsGender', { chart: { type: 'pie', options3d: { enabled: true, alpha: 45, beta: 0 } }, title: { text: 'نسبة الذكور والإناث (تلاميذ)' }, plotOptions: { pie: { innerSize: 100, depth: 45, dataLabels: { enabled: true, format: '{point.name}: {point.percentage:.1f} %' } } }, series: [{ name: 'العدد', data: [{ name: 'ذكور', y: totalS - totalF, color: '#3b82f6' }, { name: 'إناث', y: totalF, color: '#ec4899' }] }] });
@@ -587,13 +672,13 @@
         function renderUnits() {
             const container = document.getElementById('unitsGrid');
             units.forEach(unit => {
-                const coverImage = unit.images[0]; 
+                const coverImage = unit.images[0];
                 const fallbackImage = 'https://placehold.co/600x400/e2e8f0/1e40af?text=' + encodeURIComponent(unit.name);
                 container.innerHTML += `
                     <div class="bg-white rounded-xl shadow-md overflow-hidden card-hover border border-gray-100 cursor-pointer group" onclick="openModal(${unit.id})">
                         <div class="relative h-48 overflow-hidden bg-gray-200">
-                             <img src="${coverImage}" onerror="this.onerror=null; this.src='${fallbackImage}'" class="w-full h-full object-cover group-hover:scale-110 transition duration-500 protected-img" oncontextmenu="return false;" draggable="false">
-                             <div class="absolute inset-0 bg-black bg-opacity-20 group-hover:bg-opacity-10 transition"></div>
+                            <img src="${coverImage}" onerror="this.onerror=null; this.src='${fallbackImage}'" class="w-full h-full object-cover group-hover:scale-110 transition duration-500 protected-img" oncontextmenu="return false;" draggable="false">
+                            <div class="absolute inset-0 bg-black bg-opacity-20 group-hover:bg-opacity-10 transition"></div>
                         </div>
                         <div class="p-5">
                             <h3 class="text-xl font-bold text-blue-900 mb-2">${unit.name}</h3>
@@ -610,9 +695,7 @@
             const unit = units.find(u => u.id === id);
             const content = document.getElementById('modalContent');
             let galleryHTML = '';
-            unit.images.forEach(img => {
-                galleryHTML += `<img src="${img}" class="gallery-img w-full h-full rounded-lg shadow-sm hover:shadow-md protected-img" onerror="this.style.display='none'" oncontextmenu="return false;" draggable="false">`;
-            });
+            unit.images.forEach(img => { galleryHTML += `<img src="${img}" class="gallery-img w-full h-full rounded-lg shadow-sm hover:shadow-md protected-img" onerror="this.style.display='none'" oncontextmenu="return false;" draggable="false">`; });
             content.innerHTML = `
                 <div class="p-8">
                     <div class="flex justify-between items-center border-b-2 border-yellow-400 pb-4 mb-6">
@@ -633,13 +716,13 @@
 
         window.closeModal = function() { document.getElementById('unitModal').style.display = 'none'; }
 
-        window.onload = function() { 
-            setDailyQuote(); 
-            calculateTotals(); 
-            renderUnits(); 
+        window.onload = function() {
+            setDailyQuote();
+            calculateTotals();
+            renderUnits();
             renderHighcharts();
             updateDateWidget();
-            updateProgramTicker(); // تفعيل شريط المستجدات الذكي
+            updateProgramTicker();
         };
     </script>
 </body>
